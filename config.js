@@ -16,7 +16,7 @@ function getPagesConfig() {
       outputPath: getEnvironmentVariable(
         "OUTPUT_PATH",
         suffix,
-        `output/cover${suffix}.png`
+        `output/cover${suffix}.jpg`
       ),
       renderingDelay: getEnvironmentVariable("RENDERING_DELAY", suffix) || 0,
       renderingScreenSize: {

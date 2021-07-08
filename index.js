@@ -86,7 +86,7 @@ const gm = require("gm");
       const data = await fs.readFile(config.pages[pageNumber - 1].outputPath);
       console.log(`Image ${pageNumber} was accessed`);
       response.setHeader("Content-Length", Buffer.byteLength(data));
-      response.writeHead(200, { "Content-Type": "image/png" });
+      response.writeHead(200, { "Content-Type": "image/jpeg" });
       response.end(data);
     } catch (e) {
       console.error(e);
@@ -113,7 +113,7 @@ async function renderAndConvertAsync(browser) {
     console.log(`Rendering ${url} to image...`);
     await renderUrlToImageAsync(browser, pageConfig, url, tempPath);
 
-    console.log(`Converting rendered screenshot of ${url} to grayscale png...`);
+    console.log(`Converting rendered screenshot of ${url} to grayscale jpeg...`);
     await convertImageToKindleCompatiblePngAsync(
       pageConfig,
       tempPath,
@@ -170,7 +170,7 @@ async function renderUrlToImageAsync(browser, pageConfig, url, path) {
     }
     await page.screenshot({
       path,
-      type: "png",
+      type: "jpeg",
       clip: {
         x: 0,
         y: 0,
