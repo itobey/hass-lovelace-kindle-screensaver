@@ -1,3 +1,11 @@
+# Changes
+
+This is a fork of the fantastic sibbl/hass-lovelace-kindle-screensaver. I'm using this as a base to create a tool, which screenshots my Home Assistant dashboard to display it on an e-ink display (Inkplate10). Because the original tool leverages PNG I needed to change it to JPG, because the Inkplate cannot handle PNG. 
+
+After a lot of confusion and desperation I discovered that the image simply cannot be displayed, when it's generated in grayscale (although the e-ink display itself features only grayscale). I suppose this is due to some JPG metadata or header foo, but I cannot say for sure. What worked for me was to save the image as a true color image and letting the Inkplate handle the display of grayscale. This may impact the depth of some colors which may not be rendered correctly in grayscale but it is a working prototype.
+
+---
+
 # Home Assistant Lovelace Kindle Screensaver
 
 ![ci](https://github.com/sibbl/hass-lovelace-kindle-screensaver/workflows/ci/badge.svg)
