@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: hass-lovelace-screenshotter
+  IMAGE_NAME: hass-lovelace-kindle-screensaver
 
 jobs:
   # Push image to GitHub Packages.
@@ -48,8 +48,8 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           tags: |
-            ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-screenshotter:${{ env.PACKAGE_VERSION }},
-            ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-screenshotter:latest
+            ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-kindle-screensaver:${{ env.PACKAGE_VERSION }},
+            ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-kindle-screensaver:latest
       - name: Tag git commit
         uses: pkgdeps/git-tag-action@v2
         with:
