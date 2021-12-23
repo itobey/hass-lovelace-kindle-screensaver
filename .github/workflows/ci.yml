@@ -48,8 +48,8 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           tags: |
-            itobey/hass-lovelace-screenshotter:${{ env.PACKAGE_VERSION }},
-            itobey/hass-lovelace-screenshotter:latest
+            ghcr.io/itobey/hass-lovelace-screenshotter:${{ env.PACKAGE_VERSION }},
+            ghcr.io/itobey/hass-lovelace-screenshotter:latest
       - name: Tag git commit
         uses: pkgdeps/git-tag-action@v2
         with:
