@@ -1,6 +1,13 @@
 node_modules/
+.github/
+.git/
 .vscode/
 assets/
 config.*.js
 docker-compose.*.yml
+docker-compose.yml
 output/
+LICENSE
+*.md
+*.yml
+*.yaml

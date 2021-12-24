@@ -25,8 +25,11 @@ function getPagesConfig() {
         width: getEnvironmentVariable("RENDERING_SCREEN_WIDTH", suffix) || 600,
       },
       grayscaleDepth: getEnvironmentVariable("GRAYSCALE_DEPTH", suffix) || 8,
+      dither: getEnvironmentVariable("DITHER", suffix) || false,
+      colorMode: getEnvironmentVariable("COLOR_MODE", suffix) || "GrayScale",
       rotation: getEnvironmentVariable("ROTATION", suffix) || 0,
       scaling: getEnvironmentVariable("SCALING", suffix) || 1,
+      batteryWebHook: getEnvironmentVariable("HA_BATTERY_WEBHOOK", suffix) || null,
     });
   }
   return pages;

@@ -37,6 +37,7 @@ Home Assistant related stuff:
 | `HA_BASE_URL`             | `https://your-hass-instance.com:8123` | yes      | no       | Base URL of your home assistant instance                                                                                                                |
 | `HA_SCREENSHOT_URL`       | `/lovelace/screensaver?kiosk`         | yes      | yes      | Relative URL to take screenshot of (btw, the `?kiosk` parameter hides the nav bar using the [kiosk mode](https://github.com/maykar/kiosk-mode) project) |
 | `HA_ACCESS_TOKEN`         | `eyJ0...`                             | yes      | no       | Long-lived access token from Home Assistant, see [official docs](https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token)           |
+| `HA_BATTERY_WEBHOOK`      | `set_kindle_battery_level`            | no       | yes      | Webhook definied in HA which receives `batteryLevel` (number between 0-100) and `isCharging` (boolean) as JSON                                          |
 | `LANGUAGE`                | `en`                                  | no       | no       | Language to set in browser and home assistant                                                                                                           |
 | `CRON_JOB`                | `* * * * *`                           | no       | no       | How often to take screenshot                                                                                                                            |
 | `RENDERING_TIMEOUT`       | `10000`                               | no       | no       | Timeout of render process, helpful if your HASS instance might be down                                                                                  |
@@ -46,12 +47,41 @@ Home Assistant related stuff:
 | `ROTATION`                | `0`                                   | no       | yes      | Rotation of image in degrees, e.g. use 90 or 270 to render in landscape                                                                                 |
 | `SCALING`                 | `1`                                   | no       | yes      | Scaling factor, e.g. `1.5` to zoom in or `0.75` to zoom out                                                                                             |
 | `GRAYSCALE_DEPTH`         | `8`                                   | no       | yes      | Ggrayscale bit depth your kindle supports                                                                                                               |
+| `COLOR_MODE`              | `GrayScale`                           | no       | yes      | ColorMode to use, ex: `GrayScale`, or `TrueColor`.                                                                                                      |
+| `DITHER`                  | `false`                               | no       | yes      | Apply a dither to the images.                                                                                                                           |
 
 **\* Array** means that you can set `HA_SCREENSHOT_URL_2`, `HA_SCREENSHOT_URL_3`, ... `HA_SCREENSHOT_URL_n` to render multiple pages within the same instance.
 If you use `HA_SCREENSHOT_URL_2`, you can also set `ROTATION_2=180`. If there is no `ROTATION_n` set, then `ROTATION` will be used as a fallback.
 You can access these additional images by making GET Requests `http://localhost:5000/2`, `http://localhost:5000/3` etc.
 
 You may also simply use the `docker-compose.yml` file inside this repository, configure everything in there and run `docker-compose up`.
+
+### How to set up the webhook
+
+The webhook setting is to let HA keep track of the battery level of the Kindle, so it can warn you about charging it. You need to do the following:
+
+1. See below for a patch needed to make the Kindle Online Screensaver plugin send the battery level to this application.
+1. Create two new helper entities in Home Assistant:
+   1. a new `input_number` entity, e.g. `input_number.kindle_battery_level`
+   1. a new `input_boolean` entity, e.g. `input_boolean.kindle_battery_charging`
+1. Add an automation to set the values of these entities using a webhook: [![import blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fsibbl%2Fhass-lovelace-kindle-screensaver%2Fblob%2Fmain%2Fbattery_sensor_blueprint.yaml)
+1. Define this application's environment variable `HA_BATTERY_WEBHOOK` to the name of the webhook defined in the previous step. For multiple devices, `HA_BATTERY_WEBHOOK_2`, ... `HA_BATTERY_WEBHOOK_n` is supported as well.
+
+#### Patch for Kinde Online Screensaver
+
+Modify the following lines in the Kindle Online Screensaver plugin's `bin/update.sh` (absolute path on device should be `/mnt/us/extensions/onlinescreensaver/bin/update.sh`):
+
+```diff
+...
+if [ 1 -eq $CONNECTED ]; then
+-     if wget -q $IMAGE_URI -O $TMPFILE; then
++     batteryLevel=`/usr/bin/powerd_test -s | awk -F: '/Battery Level/ {print substr($2, 0, length($2)-1) - 0}'`
++     isCharging=`/usr/bin/powerd_test -s | awk -F: '/Charging/ {print substr($2,2,length($2))}'`
++     if wget -q "$IMAGE_URI?batteryLevel=$batteryLevel&isCharging=$isCharging" -O $TMPFILE; then
+        mv $TMPFILE $SCREENSAVERFILE
+        logger "Screen saver image updated"
+...
+```
 
 ### Advanced configuration
 
