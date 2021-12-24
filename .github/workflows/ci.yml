@@ -50,11 +50,3 @@ jobs:
           tags: |
             ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-kindle-screensaver:${{ env.PACKAGE_VERSION }},
             ghcr.io/itobey/hass-lovelace-screenshotter/hass-lovelace-kindle-screensaver:latest
-      - name: Tag git commit
-        uses: pkgdeps/git-tag-action@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_repo: ${{ github.repository }}
-          version: ${{ env.PACKAGE_VERSION }}
-          git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: "v"
