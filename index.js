@@ -131,11 +131,13 @@ const batteryStore = {};
           );
         }
 
-        if (isCharging === "Yes" && pageBatteryStore.isCharging !== true) {
+        if (
+          (isCharging === "Yes" || isCharging === "1") &&
+          pageBatteryStore.isCharging !== true) {
           pageBatteryStore.isCharging = true;
           console.log(`Battery started charging for page ${pageNumber}`);
         } else if (
-          isCharging === "No" &&
+          (isCharging === "No" || isCharging === "0") &&
           pageBatteryStore.isCharging !== false
         ) {
           console.log(`Battery stopped charging for page ${pageNumber}`);
@@ -205,7 +207,8 @@ function sendBatteryLevelToHomeAssistant(
     headers: {
       "Content-Type": "application/json",
       "Content-Length": Buffer.byteLength(batteryStatus)
-    }
+    },
+    rejectUnauthorized: !config.ignoreCertificateErrors
   };
   const url = `${config.baseUrl}/api/webhook/${batteryWebHook}`;
   const httpLib = url.toLowerCase().startsWith("https") ? https : http;
@@ -303,6 +306,7 @@ function convertImageToKindleCompatiblePngAsync(
       .dither(pageConfig.dither)
       .rotate("white", pageConfig.rotation)
       .type(pageConfig.colorMode)
+      .level(pageConfig.blackLevel, pageConfig.whiteLevel)
       .bitdepth(pageConfig.grayscaleDepth)
       .quality(100)
       .write(outputPath, (err) => {
